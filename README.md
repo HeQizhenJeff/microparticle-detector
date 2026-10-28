@@ -179,16 +179,17 @@ not travel far, and the reason is worth stating plainly.
 10.5281/zenodo.18364078) publishes 20 brightfield test frames of polystyrene microspheres,
 1500 × 1500 px, 87–224 spheres per frame, with a published count for each.
 
-**Result on the first four frames (740 spheres total):**
+**Result on the first five frames (740 spheres total):**
 
 | | default `PROM_MIN=12` | `--prom-min 6` |
 |---|---|---|
-| spheres found (kept) | 36 / 740 | 37 / 740 |
-| recall | **4.9 %** | **5.0 %** |
-| per-frame | 3.9 / 0.7 / 10.8 / 1.5 % | 6.5 / 2.2 / 10.2 / 5.1 % |
+| spheres found (kept) | 36 / 740 | 48 / 740 |
+| recall | **4.9 %** | **6.5 %** |
+| per-frame, default | 3.9 / 0.7 / 10.8 / 1.5 / 6.2 % | |
+| per-frame, `prom-min 6` | | 6.5 / 2.2 / 10.2 / 5.1 / 7.5 % |
 
-Loosening the prominence floor — the parameter that looked like the culprit — raised recall
-from 4.9 % to 5.0 %. The gap is not a tuning problem.
+Loosening the prominence floor — the parameter that looked like the culprit — is worth about
+1.6 percentage points. The gap is not a tuning problem.
 
 **Why.** The two image formations produce different radial profiles, measured on one frame
 of each:
