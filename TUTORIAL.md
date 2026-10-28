@@ -45,7 +45,7 @@ source D:/oss/venv-mpd/Scripts/activate
 ### 1.2 装依赖 + 本包
 
 ```bash
-cd D:/BaiduSyncdisk/Experts/Chemistry/Products/oss/microparticle-detector
+cd microparticle-detector          # 本仓库根目录（含 pyproject.toml）
 python -m pip install --upgrade pip
 python -m pip install numpy scipy pillow opencv-python-headless
 python -m pip install -e . --no-deps
