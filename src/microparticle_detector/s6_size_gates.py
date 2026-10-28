@@ -119,17 +119,38 @@ def _is_rescued(r):
             and r["d_B"] == r["d_B"] and r["d_B"] / r["d_M"] > GROW_MAX)
 
 
-def apply_gates(rows, has_fit=True):
+def apply_gates(rows, has_fit=True, allow_missing_rn2=False):
     """逐对象 classify（含 P1 rn2 豁免）+ 帧内 P2 去重 + P3 残差闸。
     rows 需含 seg/frame/d_M/d_B/ok/rn2；P2 还需拟合圆心 cx2/cy2
     （has_fit=False 时只跳过 P2，P3 照常）。
+
+    缺 rn2 的防护（2026-10-28）：旧实现把 rn2 缺失当 0.0（=完美圆），
+    P3 残差闸会**静默全失效**且不报错。现在：
+      - has_fit=True 且整表无一条有效 rn2 → raise（设计上不可能，必有 bug）
+      - has_fit=False 且无 rn2 → stderr 明确提示残差闸不生效（无拟合表的预期）
+      - 个别行 rn2 为空且落在 P3 生效范围内 → 计数并在 stderr 警告
+    确实要跳过残差闸时显式传 allow_missing_rn2=True。
+
     就地写 r['cls']，返回 rows。"""
+    if rows and not allow_missing_rn2:
+        n_rn = sum(1 for r in rows if _to_float(r.get("rn2")) is not None)
+        if n_rn == 0:
+            if has_fit:
+                raise ValueError(
+                    f"apply_gates: 输入 {len(rows)} 行，没有一条有效 rn2 值。"
+                    f"has_fit=True 的表必然带拟合残差，缺 rn2 说明上游列名/导出"
+                    f"出错；旧行为会把它当 0.0，令 P3 残差闸静默全失效。"
+                    f"确实要跳过残差闸请显式传 allow_missing_rn2=True。")
+            print(f"[apply_gates] has_fit=False 且表内无 rn2：P3 残差闸不生效"
+                  f"（无拟合表的预期行为，但 resid 类将不会出现）",
+                  file=sys.stderr)
     for r in rows:
         r["cls"] = classify(r["ok"], r["d_M"], r["d_B"], rn2=r.get("rn2"))
     if has_fit:
         _dedup(rows)
     # P3 残差闸：d_M ≥ 40px 且 rn2 过高（金标准好球 max 0.0219）
     # 经 P1 豁免救回的 grow 不走 P3（标定人群不同，见 docstring）
+    n_blank_p3 = 0
     for r in rows:
         if r["cls"] != "kept" or r["d_M"] < RES_MIN_SEED:
             continue
@@ -137,9 +158,14 @@ def apply_gates(rows, has_fit=True):
             continue
         rn = _to_float(r.get("rn2"))
         if rn is None:
+            n_blank_p3 += 1
             rn = 0.0
         if rn > RES_MAX:
             r["cls"] = "resid"
+    if n_blank_p3:
+        print(f"[apply_gates] 警告：{n_blank_p3} 个 d_M≥{RES_MIN_SEED:.0f}px 的"
+              f"圈 rn2 为空，已按 0.0 放行（P3 对它们无判定力）",
+              file=sys.stderr)
     return rows
 
 

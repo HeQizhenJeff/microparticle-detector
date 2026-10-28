@@ -65,13 +65,15 @@ def main():
         framedir = Path(a.frame).parent
     else:
         ap.error("需要 --framedir（帧图所在目录），或把 --frame 写成完整路径")
+    # --frame 允许写成完整路径；CSV 的 frame 列存的是纯文件名
+    frame_name = Path(a.frame).name
     um, bar_um = a.um_per_px, a.bar_um
     bar_px = bar_um / um
 
     objs = []
     with open(a.csv, encoding="utf-8") as f:
         for r in csv.DictReader(f):
-            if r["seg"] != a.seg or r["frame"] != a.frame:
+            if r["seg"] != a.seg or r["frame"] != frame_name:
                 continue
             r["d_M"] = float(r["d_M"])
             r["d_B"] = float(r["d_B"]) if r["d_B"] else float("nan")
@@ -82,7 +84,7 @@ def main():
             r["rn2"] = float(r["rn2"]) if r.get("rn2") else None
             objs.append(r)
     if not objs:
-        sys.exit(f"no objects for {a.seg}/{a.frame}")
+        sys.exit(f"no objects for {a.seg}/{frame_name}")
     has_fit = any(np.isfinite(r["cx2"]) for r in objs)
     if not has_fit:
         # CSV 无拟合圆心（旧版/重跑未完成）→ 对本帧现场跑 evaluate 补齐
@@ -90,7 +92,7 @@ def main():
             "s6_b_gate", str(HERE / "s6_b_gate.py"))
         bg = importlib.util.module_from_spec(spec_b)
         spec_b.loader.exec_module(bg)
-        g = bg.load_gray(framedir / a.frame).astype(np.float32)
+        g = bg.load_gray(framedir / frame_name).astype(np.float32)
         for r in objs:
             e = bg.evaluate(g, float(r["x"]), float(r["y"]), r["d_M"] / 2.0)
             r["cx2"] = e.get("cx2", float("nan"))
@@ -100,7 +102,7 @@ def main():
         print(f"[annot] 现场 evaluate 补齐拟合圆心: {len(objs)} 对象")
     G.apply_gates(objs, has_fit=has_fit)
 
-    im = Image.open(framedir / a.frame).convert("RGB")
+    im = Image.open(framedir / frame_name).convert("RGB")
     dr = ImageDraw.Draw(im)
     try:
         fnt = ImageFont.truetype("C:/Windows/Fonts/msyh.ttc", 15)
@@ -159,7 +161,7 @@ def main():
 
     n_rej = sum(1 for r in objs if r["cls"] == "breject")
     rej_txt = "未画" if a.no_reject else "青线(无标签)"
-    hdr = (f"{a.seg} {a.frame} · 白圈=入表 {n['kept']} · 橙簇 {n['giant']} · "
+    hdr = (f"{a.seg} {frame_name} · 白圈=入表 {n['kept']} · 橙簇 {n['giant']} · "
            f"黄扩 {n['grow']} · 紫重 {n['dup']} · 红残 {n['resid']} · "
            f"青线=B拒 {n_rej} {rej_txt}")
     dr.rectangle([0, 0, W, 30], fill=(0, 0, 0))
@@ -167,7 +169,7 @@ def main():
 
     out = Path(a.out)
     out.mkdir(parents=True, exist_ok=True)      # 目录不存在直接崩过（2026-10-13）
-    out = out / f"size_annot_{a.seg}_{Path(a.frame).stem}.jpg"
+    out = out / f"size_annot_{a.seg}_{Path(frame_name).stem}.jpg"
     im.save(out, quality=90)
     print("saved:", out, im.size,
           f"keep={n['kept']} giant={n['giant']} grow={n['grow']} dup={n['dup']} "
