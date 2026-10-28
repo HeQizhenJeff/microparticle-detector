@@ -9,35 +9,40 @@ Work through it top to bottom; nothing here touches the lab data.
 
 | Item | State |
 |---|---|
-| Repository contents (17 files + CI + tests) | **done** |
-| Local commit on branch `master` | **done** — `b2f1411` + the CI commit |
+| Repository contents (code + README + TUTORIAL + 3 figures + CI + tests) | **done** |
+| Local commit on branch `master` | **done** |
 | Hard-coded paths removed | **done** — 4 sites |
 | Frame filename assumption (`frame_*.jpg`) removed | **done** — 2 sites |
 | ASR chain / API-key code / backups / conflict files excluded | **done** — see `docs/EXCLUDED.md` |
+| Scratch dirs (`_ps1*`, `_reg_*`, `_smoke*`, `_synth*`) untracked + globally ignored | **done** — 2026-10-28 |
 | Real microscope frames in the repo | **none** — synthetic generator only |
-| `pip install -e .` verified | **done** |
-| Synthetic end-to-end + P/R check | **done** — P 99.2% / R 88.0% |
+| Figures in `docs/images/` | **none derived from lab data** — all from `make_synthetic.py` |
+| Broken badges removed from README | **done** — the old `YOURNAME` CI badge 404'd; see step 1 |
+| `pip install -e .` verified | **done** — 2026-10-28, py 3.13 |
+| Synthetic end-to-end + P/R check | **done** — P 99.2% / R 88.0%, 69 s/frame |
 | CI workflow | **done** — `.github/workflows/ci.yml`, py 3.9 / 3.11 / 3.12 |
-| README, MIT LICENSE, CITATION.cff, requirements, pyproject | **done** |
+| README, TUTORIAL, MIT LICENSE, CITATION.cff, requirements, pyproject | **done** |
 | GitHub remote + push | **you** |
 | Zenodo DOI | **you** (2 clicks, see step 4) |
 
 ---
 
-## Step 1 — Replace the placeholder (1 minute)
+## Step 1 — Add the two badges that need a real repo (1 minute)
 
-Two places carry `YOURNAME`:
+The README currently ships only badges that resolve without a repository
+(License, Python version, OpenCV). The CI badge was removed because
+`github.com/YOURNAME/...` returns 404, and a broken image at the top of a README is
+worse than no badge.
 
-- `README.md` — the CI badge URL (top of file)
-- nothing else; `pyproject.toml` and `CITATION.cff` need no username
+After step 3 (push) and a green CI run, put these two lines under the existing badges:
 
-```bash
-cd Products/oss/microparticle-detector
-# edit README.md, replace YOURNAME
-git add README.md
-git -c user.name="He Qizhen" -c user.email="you@example.com" \
-    commit -m "Set CI badge URL"
+```markdown
+[![CI](https://github.com/OWNER/REPO/actions/workflows/ci.yml/badge.svg)](https://github.com/OWNER/REPO/actions/workflows/ci.yml)
+<!-- and after step 4: -->
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.XXXXXXX.svg)](https://doi.org/10.5281/zenodo.XXXXXXX)
 ```
+
+`OWNER/REPO` is your actual `user/repo`. Nothing else in the repo contains a placeholder.
 
 Optional but recommended before pushing: put your real email in the last two commits.
 

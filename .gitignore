@@ -13,9 +13,15 @@ env/
 
 # Outputs and scratch
 out/
+out_*/
+results/
+demo/
+_ps*/
+_ps*_out/
+_reg_*/
 _smoke*/
 _synth*/
-results/
+_scratch*/
 *.log
 
 # OS / editor

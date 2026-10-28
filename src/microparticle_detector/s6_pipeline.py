@@ -36,7 +36,7 @@ Outputs in --out:
     objects.csv              per-circle B-gate measurements
     objects_classified.csv   objects.csv + cls column (kept/giant/grow/dup/resid/breject)
     summary.json             counts, parameters, timings
-    annot/                   optional annotated PNGs
+    annot/                   optional annotated overlays (jpg)
 """
 from __future__ import annotations
 
@@ -161,7 +161,11 @@ def main():
     ap.add_argument("--limit", type=int, help="only the first N frames (smoke test)")
     ap.add_argument("--gate", action="store_true",
                     help="also run the frame-level focus gate (QC only)")
-    ap.add_argument("--annotate", action="store_true", help="write annotated PNGs")
+    ap.add_argument("--annotate", action="store_true", help="write annotated overlays to out/annot (jpg)")
+    ap.add_argument("--no-reject", action="store_true",
+                    help="with --annotate: do not draw the thin cyan outlines of "
+                         "candidates rejected by the B gate (they can be hundreds "
+                         "per frame and make the overlay hard to read)")
     ap.add_argument("--um-per-px", type=float, default=0.0762,
                     help="spatial calibration for the annotated scale bar")
     ap.add_argument("--bar-um", type=float, default=10.0, help="scale bar length in um")
@@ -314,10 +318,13 @@ def main():
         annot_dir.mkdir(exist_ok=True)
         frames_with_kept = sorted({r["frame"] for r in gated})
         for name in frames_with_kept:
-            run([py, f"{pkg_dir}/s6_size_annot.py", "--csv", str(classified_csv),
-                 "--seg", seg, "--frame", name, "--framedir", str(frdir),
-                 "--out", str(annot_dir), "--um-per-px", str(a.um_per_px),
-                 "--bar-um", str(a.bar_um)], f"6/6 annot {name}")
+            cmd = [py, f"{pkg_dir}/s6_size_annot.py", "--csv", str(classified_csv),
+                   "--seg", seg, "--frame", name, "--framedir", str(frdir),
+                   "--out", str(annot_dir), "--um-per-px", str(a.um_per_px),
+                   "--bar-um", str(a.bar_um)]
+            if a.no_reject:
+                cmd.append("--no-reject")
+            run(cmd, f"6/6 annot {name}")
         timings["annotate"] = time.time() - t0
 
     # ---- summary ----------------------------------------------------------

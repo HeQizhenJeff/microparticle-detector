@@ -1,9 +1,8 @@
 # microparticle-detector
 
-<!-- TODO before publishing: replace YOURNAME with your GitHub username -->
-[![CI](https://github.com/YOURNAME/microparticle-detector/actions/workflows/ci.yml/badge.svg)](https://github.com/YOURNAME/microparticle-detector/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-blue.svg)](https://www.python.org/)
+[![OpenCV](https://img.shields.io/badge/OpenCV-4.5%2B-5C3EE8.svg)](https://opencv.org/)
 
 Circle detection and sizing for **dense, label-free brightfield microscopy of colloidal
 microspheres** — no training, no GPU, every detection geometrically auditable.
@@ -11,6 +10,32 @@ microspheres** — no training, no GPU, every detection geometrically auditable.
 ```
 python -m microparticle_detector.s6_pipeline --frames ./frames --out ./out
 ```
+
+**Step-by-step guide (中文): [`TUTORIAL.md`](TUTORIAL.md)** — install, first run, tuning on
+your own images, every output column explained.
+
+---
+
+## What it looks like
+
+A synthetic frame with known ground truth (built in — no data needed to try the code),
+made by `python examples/make_synthetic.py --out ./synth --n 150 --seed 3`:
+
+![input frame](docs/images/example_input.jpg)
+
+The same frame after `--annotate`. White circles are the detections that enter the size
+table, each labelled with its diameter in micrometres; cyan circles are candidates that were
+rejected by the B gate and are shown on purpose, so you can see what was thrown away. The
+header line and the overlay labels are in Chinese — the mapping is in
+[Annotation colours](#annotation-colours):
+
+![annotated output](docs/images/example_annotated.jpg)
+
+![zoom of the annotated output](docs/images/example_zoom.jpg)
+
+The chain in one picture:
+
+![pipeline](docs/images/pipeline.svg)
 
 ---
 
@@ -81,11 +106,28 @@ Input: a directory of `*.jpg / *.png / *.tif` frames, one frame per file.
 | `objects_classified.csv` | same plus `cls` = `kept / giant / grow / dup / resid / breject` |
 | `ring.csv`, `extras.csv` | intermediate candidates from the two channels |
 | `summary.json` | counts, parameters, per-stage timings |
-| `annot/` | optional annotated PNGs with a scale bar |
+| `annot/` | optional annotated overlays (jpg) with a scale bar |
 
 `cls == "kept"` is the set that should enter a particle-size table. `breject` means the
 candidate failed the ring-consistency gate; `giant` is a clump larger than one sphere;
 `resid` is a poor circle fit; `dup` is a second measurement of the same sphere.
+
+### Annotation colours
+
+The overlay header and the CSV `cls` values are the project's internal working language
+(Chinese). This is the full mapping — nothing else is drawn on the image:
+
+| on the image | header text | `cls` | meaning |
+|---|---|---|---|
+| white solid circle + `2.3` | 白圈 = 入表 | `kept` | accepted; the number is its diameter in µm |
+| orange circle | 橙簇 | `giant` | P0: clump larger than one sphere |
+| yellow circle | 黄扩 | `grow` | P1: circle grew onto a neighbouring sphere |
+| purple dashed circle | 紫重 | `dup` | P2: duplicate measurement of the same sphere |
+| red circle | 红残 | `resid` | P3: high-residual circle fit |
+| thin cyan outline, unlabelled | 青线 = B拒 | `breject` | rejected by the B gate (drawn to show what was thrown away) |
+
+`--no-reject` suppresses the cyan outlines if a few hundred of them make the frame
+unreadable.
 
 ---
 

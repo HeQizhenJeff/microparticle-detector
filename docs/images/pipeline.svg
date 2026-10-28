@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 400" width="900" height="400" role="img" aria-label="pipeline overview">
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#5a6472"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="900" height="400" fill="#ffffff"/>
+
+  <!-- ================= row 1 ================= -->
+  <rect x="42" y="70" width="115" height="64" rx="8" fill="#ffffff" stroke="#8d97a6" stroke-width="1.4"/>
+  <text x="99.5" y="96" text-anchor="middle" font-family="Segoe UI,Helvetica,Arial,sans-serif" font-size="14" font-weight="600" fill="#1d2430">frames</text>
+  <text x="99.5" y="114" text-anchor="middle" font-family="Segoe UI,Helvetica,Arial,sans-serif" font-size="11" fill="#5a6472">jpg / png / tif</text>
+
+  <rect x="182" y="70" width="115" height="64" rx="8" fill="#ffffff" stroke="#8d97a6" stroke-width="1.4"/>
+  <text x="239.5" y="96" text-anchor="middle" font-family="Segoe UI,Helvetica,Arial,sans-serif" font-size="14" font-weight="600" fill="#1d2430">dark-ring</text>
+  <text x="239.5" y="114" text-anchor="middle" font-family="Segoe UI,Helvetica,Arial,sans-serif" font-size="11" fill="#5a6472">black-hat + Hough</text>
+
+  <rect x="322" y="70" width="115" height="64" rx="8" fill="#f4f7fb" stroke="#8d97a6" stroke-width="1.4"/>
+  <text x="379.5" y="96" text-anchor="middle" font-family="Segoe UI,Helvetica,Arial,sans-serif" font-size="14" font-weight="600" fill="#1d2430">merge + dedup</text>
+  <text x="379.5" y="114" text-anchor="middle" font-family="Segoe UI,Helvetica,Arial,sans-serif" font-size="11" fill="#5a6472">d &lt; 0.7(r1+r2)</text>
+
+  <rect x="462" y="70" width="115" height="64" rx="8" fill="#ffffff" stroke="#8d97a6" stroke-width="1.4"/>
+  <text x="519.5" y="96" text-anchor="middle" font-family="Segoe UI,Helvetica,Arial,sans-serif" font-size="14" font-weight="600" fill="#1d2430">B gate</text>
+  <text x="519.5" y="114" text-anchor="middle" font-family="Segoe UI,Helvetica,Arial,sans-serif" font-size="11" fill="#5a6472">16 radial troughs</text>
+
+  <rect x="602" y="70" width="115" height="64" rx="8" fill="#ffffff" stroke="#8d97a6" stroke-width="1.4"/>
+  <text x="659.5" y="96" text-anchor="middle" font-family="Segoe UI,Helvetica,Arial,sans-serif" font-size="14" font-weight="600" fill="#1d2430">size gates</text>
+  <text x="659.5" y="114" text-anchor="middle" font-family="Segoe UI,Helvetica,Arial,sans-serif" font-size="11" fill="#5a6472">P0 to P3</text>
+
+  <rect x="742" y="70" width="115" height="64" rx="8" fill="#ffffff" stroke="#8d97a6" stroke-width="1.4"/>
+  <text x="799.5" y="96" text-anchor="middle" font-family="Segoe UI,Helvetica,Arial,sans-serif" font-size="14" font-weight="600" fill="#1d2430">outputs</text>
+  <text x="799.5" y="114" text-anchor="middle" font-family="Segoe UI,Helvetica,Arial,sans-serif" font-size="11" fill="#5a6472">csv + overlay</text>
+
+  <!-- ================= row 2 ================= -->
+  <rect x="42" y="228" width="115" height="64" rx="8" fill="#ffffff" stroke="#8d97a6" stroke-width="1.4"/>
+  <text x="99.5" y="254" text-anchor="middle" font-family="Segoe UI,Helvetica,Arial,sans-serif" font-size="14" font-weight="600" fill="#1d2430">--baseline</text>
+  <text x="99.5" y="272" text-anchor="middle" font-family="Segoe UI,Helvetica,Arial,sans-serif" font-size="11" fill="#5a6472">optional csv</text>
+
+  <rect x="322" y="228" width="115" height="64" rx="8" fill="#ffffff" stroke="#8d97a6" stroke-width="1.4"/>
+  <text x="379.5" y="254" text-anchor="middle" font-family="Segoe UI,Helvetica,Arial,sans-serif" font-size="14" font-weight="600" fill="#1d2430">rescue</text>
+  <text x="379.5" y="272" text-anchor="middle" font-family="Segoe UI,Helvetica,Arial,sans-serif" font-size="11" fill="#5a6472">5 seed sources</text>
+
+  <!-- ================= arrows ================= -->
+  <line x1="157" y1="102" x2="178" y2="102" stroke="#5a6472" stroke-width="1.4" marker-end="url(#ar)"/>
+  <line x1="297" y1="102" x2="318" y2="102" stroke="#5a6472" stroke-width="1.4" marker-end="url(#ar)"/>
+  <line x1="437" y1="102" x2="458" y2="102" stroke="#5a6472" stroke-width="1.4" marker-end="url(#ar)"/>
+  <line x1="577" y1="102" x2="598" y2="102" stroke="#5a6472" stroke-width="1.4" marker-end="url(#ar)"/>
+  <line x1="717" y1="102" x2="738" y2="102" stroke="#5a6472" stroke-width="1.4" marker-end="url(#ar)"/>
+
+  <path d="M379.5,224 L379.5,140" fill="none" stroke="#5a6472" stroke-width="1.4" marker-end="url(#ar)"/>
+  <path d="M157,260 L240,260 L240,190 L344,190 L344,140" fill="none" stroke="#5a6472" stroke-width="1.4" marker-end="url(#ar)"/>
+  <path d="M437,260 L395,260 L395,300 L179.5,300 L179.5,260" fill="none" stroke="#5a6472" stroke-width="1.2" stroke-dasharray="4 3" marker-end="url(#ar)"/>
+  <text x="250" y="318" font-family="Segoe UI,Helvetica,Arial,sans-serif" font-size="10.5" fill="#5a6472">rescue may also start from the baseline set</text>
+
+  <!-- ================= notes ================= -->
+  <text x="42" y="26" font-family="Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#3a4351">One frame in, one auditable table out - every rejected circle keeps its numeric reason.</text>
+
+  <text x="42" y="356" font-family="Segoe UI,Helvetica,Arial,sans-serif" font-size="11.5" fill="#3a4351">Candidate order: baseline, ring, rescue. The first source to claim a sphere wins, so higher-confidence sources survive de-duplication.</text>
+  <text x="42" y="376" font-family="Segoe UI,Helvetica,Arial,sans-serif" font-size="11.5" fill="#3a4351">B gate rejects a candidate when it cannot find a dark trough along enough of the 16 radial directions - most false positives die here.</text>
+  <text x="42" y="396" font-family="Segoe UI,Helvetica,Arial,sans-serif" font-size="11.5" fill="#3a4351">P0 removes clumps, P1 catches circles that grew onto a neighbour, P2 merges duplicates, P3 drops high-residual fits.</text>
+</svg>
