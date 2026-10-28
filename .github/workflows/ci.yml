@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  smoke:
+    name: smoke test (py${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.9", "3.11", "3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      # headless build of OpenCV: the runner has no libGL, and we never open a window
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install numpy scipy pillow opencv-python-headless
+          pip install -e . --no-deps
+
+      - name: CLI is importable
+        run: |
+          python -c "import microparticle_detector as m; print(m.__version__)"
+          python -m microparticle_detector.s6_pipeline --help
+
+      - name: Generate a synthetic frame with known ground truth
+        run: python examples/make_synthetic.py --out /tmp/synth --n 80 --seed 7
+
+      - name: Run the full chain
+        run: |
+          python -m microparticle_detector.s6_pipeline \
+            --frames /tmp/synth --out /tmp/out --annotate
+
+      - name: Check precision / recall on the synthetic truth
+        run: |
+          python tests/check_synthetic.py \
+            --truth /tmp/synth/truth.csv \
+            --pred /tmp/out/objects_classified.csv
+
+      - name: Upload outputs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: smoke-py${{ matrix.python-version }}
+          path: /tmp/out
+          if-no-files-found: warn
