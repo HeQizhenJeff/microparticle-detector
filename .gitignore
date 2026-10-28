@@ -1,0 +1,32 @@
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.eggs/
+
+# Environments
+.venv/
+venv/
+env/
+
+# Outputs and scratch
+out/
+_smoke*/
+_synth*/
+results/
+*.log
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Local data — never commit raw microscopy frames or lab notebooks
+data/
+frames_private/
+*.nd2
+*.czi
+*.lif

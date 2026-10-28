@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "microparticle-detector: dark-ring circle detection for brightfield microscopy of colloidal microspheres"
+abstract: >-
+  Deterministic, training-free circle detection and sizing for dense label-free
+  brightfield microscopy of colloidal microspheres. Two independent candidate
+  generators (a dark-ring channel and a five-source rescue channel) feed a shared
+  geometric verifier, followed by a series of size gates.
+authors:
+  - family-names: "He"
+    given-names: "Qizhen"
+version: 1.0.0
+date-released: "2026-10-28"
+license: MIT
+keywords:
+  - microscopy
+  - particle detection
+  - colloidal microspheres
+  - image analysis
+  - brightfield
