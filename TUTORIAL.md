@@ -435,7 +435,7 @@ opencv 运行时）。8 GB 机器保守别超过 3；报 MemoryError 就先降�
 ```
 
 第一次正式发布后，Zenodo 会给一个 DOI，届时替换上面的 `note`，并在 README 顶部加
-DOI 徽章（步骤见 `docs/PUBLISHING.md`）。
+DOI 徽章。
 
 ---
 
