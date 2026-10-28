@@ -799,7 +799,8 @@ def _run_one(job):
 
 def main():
     ap = argparse.ArgumentParser(description="S6-CR 粘连簇救回通道")
-    ap.add_argument("--frames", required=True, help="帧目录（*.jpg）")
+    ap.add_argument("--frames", required=True,
+                    help="帧目录（支持 jpg/png/tif/bmp 等）")
     ap.add_argument("--baseline", help="kept CSV（expl 来源，可选）")
     ap.add_argument("--ring", help="S6-R 过门圈 JSON（expl 来源，可选）")
     ap.add_argument("--out", help="输出 CSV（默认 <帧目录>/_clump_extras.csv）")
@@ -850,7 +851,7 @@ def main():
           f"daophot={not a.no_daophot} halfgate={not a.no_halfgate} "
           f"sweep_adapt={not a.no_sweep_adapt} sweep_sup={not a.no_sweep_sup} "
           f"baseovl={not a.no_baseovl} lobes={not a.no_lobes} "
-          f"split={a.split} | {len(frames)} 帧", flush=True)
+          f"split={a.split} prom_min={a.prom_min} | {len(frames)} 帧", flush=True)
     t_all = time.time()
     jobs = [(f, (expl_all.get(Path(f).name) or expl_all.get(Path(f).stem)
                  or expl_all.get(str(Path(f))) or []), a.mode, a.iters,
