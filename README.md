@@ -187,25 +187,33 @@ not travel far, and the reason is worth stating plainly.
 | recall | **4.9 %** | **5.0 %** |
 | per-frame | 3.9 / 0.7 / 10.8 / 1.5 % | 6.5 / 2.2 / 10.2 / 5.1 % |
 
-Loosening the prominence floor — the parameter that looked like the culprit, since our
-spheres give ~80 grey levels of ring prominence while these give 12–30 — raised recall from
-4.9 % to 5.0 %. The check is not a tuning problem.
+Loosening the prominence floor — the parameter that looked like the culprit — raised recall
+from 4.9 % to 5.0 %. The gap is not a tuning problem.
 
-**Why.** The two image formations produce different radial profiles, measured on the same
-frame:
+**Why.** The two image formations produce different radial profiles, measured on one frame
+of each:
 
-| | centre → rim → background | ring prominence |
+| | profile, centre → out | where the dark ring sits |
 |---|---|---|
-| our phase-contrast spheres | 131 → 98 (at 0.56 R) → 177 | **81** |
-| PSCount absorbing spheres | 114 → 143 (monotonic rise) → 178 | **~12** |
+| our phase-contrast spheres | 161 → peak 173 (0.5 R) → dip **92** (1.7 R) → 132 | **outside** the bright core |
+| PSCount absorbing spheres | 131 → dip **98** (0.59 R) → 180 | **inside**, toward the sphere centre |
 
-Their spheres are solid absorbing bodies: the intensity rises monotonically from centre to
-background. Ours are transparent spheres whose dark ring exists only because of phase
-contrast. The B gate is built to find a closed annulus with bright shoulders on both sides;
-a solid dark disc has almost none. On the same frames a crude classical baseline
-(threshold → distance transform → watershed) reaches **MAE 47.8**, and the PSCount authors
-report **MAE 2.1** for their fine-tuned Cellpose-SAM versus **65.5** for the same model
-zero-shot.
+Our spheres show the classic phase-contrast signature: a bright core, then a dark ring
+just outside it, then the background. Their spheres are solid absorbing bodies whose
+darkest band lies at half the sphere radius, with the intensity then rising monotonically
+to the background. **The B gate is built to find a dark annulus at the sphere boundary, so
+on their spheres it locks onto the wrong radius.** Running the gate directly on 12 hand-picked
+true spheres gives `fit_fail, n=0` on 11 of them: no qualifying valley at all.
+
+Part of that is a threshold effect — on a single-direction profile of a 9 px sphere the
+valley is only 6–12 grey levels deep (the 33 above is the azimuthal average), right at the
+`PROM_MIN = 12` cut. Dropping it to 6 lets 40 of 49 true spheres through the gate. It still
+does not rescue the pipeline, because the candidate generators (a morphological black-hat
+sized for 24–56 px spheres) and the size gates are calibrated to our morphology too.
+
+For scale, on the same frames a crude classical baseline (threshold → distance transform →
+watershed) reaches **MAE 47.8**, and the PSCount authors report **MAE 2.1** for their
+fine-tuned Cellpose-SAM against **65.5** for the same model zero-shot.
 
 **What this means.** This is a detector for *one* image formation — phase-contrast dark
 rings on transparent spheres of a known size range. It is not a general particle counter.
