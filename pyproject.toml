@@ -24,6 +24,11 @@ dependencies = [
     "pillow>=9.0",
 ]
 
+[project.urls]
+Homepage = "https://github.com/HeQizhenJeff/microparticle-detector"
+Repository = "https://github.com/HeQizhenJeff/microparticle-detector"
+Issues = "https://github.com/HeQizhenJeff/microparticle-detector/issues"
+
 [project.scripts]
 microparticle-detect = "microparticle_detector.s6_pipeline:main"
 

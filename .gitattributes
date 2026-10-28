@@ -1,0 +1,11 @@
+# 统一入库为 LF：避免 Windows 侧提交把整文件变成 CRLF 改动
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.tif binary
+*.tiff binary
+*.zip binary
+*.pdf binary
