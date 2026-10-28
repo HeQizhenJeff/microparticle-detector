@@ -768,13 +768,16 @@ def _run_one(job):
     global SWEEP_ADAPT, SWEEP_SUP_ON, BASE_OVL_ON, LOBES_ON, SPLIT_ON
     (fpath, expl, mode, clean_iters, use_daophot, use_sweep, use_bright,
      use_halfgate, use_sweep_adapt, use_sweep_sup, use_baseovl,
-     use_lobes, use_split) = job
+     use_lobes, use_split, prom_min) = job
     # 刀⑥/⑦/⑧/⑨ 开关随 job 传（multiprocessing spawn 不继承模块全局）
     SWEEP_ADAPT = use_sweep_adapt
     SWEEP_SUP_ON = use_sweep_sup
     BASE_OVL_ON = use_baseovl
     LOBES_ON = use_lobes
     SPLIT_ON = use_split
+    # 凸起门按 job 透传（spawn 不继承；None = 用 s6_b_gate 的默认 PROM_MIN）
+    if prom_min is not None:
+        BG.PROM_MIN = prom_min
     fpath = Path(fpath)
     g = BG.load_gray(fpath).astype(np.float32)
     t0 = time.time()
@@ -820,6 +823,10 @@ def main():
                     help="关刀⑧圈内亮瓣数闸（nlobe>=3 弃；开时=纯减法）")
     ap.add_argument("--split", action="store_true",
                     help="重开刀⑨ split 双球拆分通道（默认关，技术保留）")
+    ap.add_argument("--prom-min", type=float, default=None,
+                    help="覆盖 B 门的凸起度下限 PROM_MIN（默认 12）。跨体系换数据时"
+                         "这是第一个要重标的参数：相位型暗环球约 80 灰度，"
+                         "吸收型实心暗球只有 12–30，不降此门会大面积漏检")
     ap.add_argument("--limit", type=int, help="最多跑前 N 帧")
     a = ap.parse_args()
 
@@ -849,7 +856,7 @@ def main():
                  or expl_all.get(str(Path(f))) or []), a.mode, a.iters,
              not a.no_daophot, not a.no_sweep, not a.no_bright,
              not a.no_halfgate, not a.no_sweep_adapt, not a.no_sweep_sup,
-             not a.no_baseovl, not a.no_lobes, a.split)
+             not a.no_baseovl, not a.no_lobes, a.split, a.prom_min)
             for f in frames]
 
     if a.workers > 1:

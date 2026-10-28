@@ -1,0 +1,32 @@
+{
+  "frames": 1,
+  "seg": "_smoke",
+  "circles": 689,
+  "by_source": {
+    "rescue": 147,
+    "ring": 542
+  },
+  "classes": {
+    "kept": 651,
+    "breject": 35,
+    "resid": 3
+  },
+  "kept": 651,
+  "parameters": {
+    "dedup_frac": 0.7,
+    "um_per_px": 0.0762,
+    "bar_um": 10.0,
+    "workers": 1,
+    "skip_ring": false,
+    "skip_rescue": false
+  },
+  "timings": {
+    "ring_channel": 3.8,
+    "clump_rescue": 57.3,
+    "merge": 0.4,
+    "b_gate": 4.4,
+    "gates": 0.0
+  },
+  "wall_seconds": 66.1,
+  "seconds_per_frame": 66.07
+}

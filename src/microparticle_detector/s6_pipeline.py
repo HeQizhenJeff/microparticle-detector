@@ -167,6 +167,12 @@ def main():
     ap.add_argument("--bar-um", type=float, default=10.0, help="scale bar length in um")
     ap.add_argument("--skip-ring", action="store_true", help="skip the dark-ring channel")
     ap.add_argument("--skip-rescue", action="store_true", help="skip the rescue channel")
+    ap.add_argument("--prom-min", type=float, default=None,
+                    help="override the B-gate prominence floor PROM_MIN (default 12). "
+                         "This is the first parameter to re-calibrate when moving to a "
+                         "different imaging modality: phase-contrast dark rings in our "
+                         "data give ~80 grey levels of prominence, whereas absorbing "
+                         "solid spheres give only 12-30 and are mostly rejected")
     a = ap.parse_args()
 
     t_start = time.time()
@@ -223,6 +229,8 @@ def main():
                "--baseline", str(base_for_rescue), "--out", str(extras_csv)]
         if a.workers > 1:
             cmd += ["--workers", str(a.workers)]
+        if a.prom_min is not None:
+            cmd += ["--prom-min", str(a.prom_min)]
         if a.limit:
             cmd += ["--limit", str(a.limit)]
         timings["clump_rescue"] = run(cmd, "2/6 rescue channel")

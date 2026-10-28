@@ -170,6 +170,56 @@ universal score. Run it on your own images before trusting any number on this pa
 
 ---
 
+## What it does *not* do: a cross-modality test
+
+We ran this detector on somebody else's public data to find out how far it travels. It does
+not travel far, and the reason is worth stating plainly.
+
+**Data.** PSCount (Shin & Lee, *SoftwareX* 2026, DOI 10.1016/j.softx.2026.102695; data
+10.5281/zenodo.18364078) publishes 20 brightfield test frames of polystyrene microspheres,
+1500 × 1500 px, 87–224 spheres per frame, with a published count for each.
+
+**Result on the first four frames (740 spheres total):**
+
+| | default `PROM_MIN=12` | `--prom-min 6` |
+|---|---|---|
+| spheres found (kept) | 36 / 740 | 37 / 740 |
+| recall | **4.9 %** | **5.0 %** |
+| per-frame | 3.9 / 0.7 / 10.8 / 1.5 % | 6.5 / 2.2 / 10.2 / 5.1 % |
+
+Loosening the prominence floor — the parameter that looked like the culprit, since our
+spheres give ~80 grey levels of ring prominence while these give 12–30 — raised recall from
+4.9 % to 5.0 %. The check is not a tuning problem.
+
+**Why.** The two image formations produce different radial profiles, measured on the same
+frame:
+
+| | centre → rim → background | ring prominence |
+|---|---|---|
+| our phase-contrast spheres | 131 → 98 (at 0.56 R) → 177 | **81** |
+| PSCount absorbing spheres | 114 → 143 (monotonic rise) → 178 | **~12** |
+
+Their spheres are solid absorbing bodies: the intensity rises monotonically from centre to
+background. Ours are transparent spheres whose dark ring exists only because of phase
+contrast. The B gate is built to find a closed annulus with bright shoulders on both sides;
+a solid dark disc has almost none. On the same frames a crude classical baseline
+(threshold → distance transform → watershed) reaches **MAE 47.8**, and the PSCount authors
+report **MAE 2.1** for their fine-tuned Cellpose-SAM versus **65.5** for the same model
+zero-shot.
+
+**What this means.** This is a detector for *one* image formation — phase-contrast dark
+rings on transparent spheres of a known size range. It is not a general particle counter.
+Making it work on absorbing solid spheres is not a threshold change; the ring channel's
+candidate generator and the size gates are both built around the dark-ring morphology and
+would need to be rewritten. If your images look like solid dark discs, use a
+threshold/watershed baseline or a fine-tuned network instead.
+
+We are documenting the failure rather than hiding it because it defines the tool's scope
+precisely, and because a scope statement is more useful than a generalisation claim that
+does not hold.
+
+---
+
 ## Failure modes
 
 These are the four ways this detector fails. They are documented because we could not fix
@@ -201,9 +251,14 @@ frame in our set emitted 153 circles where neighbours emitted ~290, and supplied
 ## Known limitations
 
 - **Throughput.** ~0.03 FPS per core. For thousands of frames this is the wrong tool.
+- **One image formation only.** Phase-contrast dark rings on transparent spheres. On
+  absorbing solid dark spheres the same code finds ~5 % of the objects — see the
+  cross-modality section above. This is the single most important thing to check before
+  reusing the package.
 - **Per-batch calibration.** The radius range and the contrast thresholds assume a
   particular imaging setup. Changing exposure, objective or sphere size requires re-tuning
-  against a small labelled set.
+  against a small labelled set. `--prom-min` exposes the one parameter that dominated in our
+  tests, but on a new modality it was not sufficient.
 - **3D clumps.** Spheres stacked out of the focal plane are under-counted.
 - **No size-distribution model.** The package reports circle diameters; converting them to
   a volume-weighted distribution is left to the user.
