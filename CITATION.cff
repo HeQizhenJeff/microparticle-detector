@@ -10,8 +10,10 @@ authors:
   - family-names: "He"
     given-names: "Qizhen"
 version: 1.0.0
-date-released: "2026-10-28"
+date-released: "2026-11-06"
 license: MIT
+type: software
+repository-code: "https://github.com/HeQizhenJeff/microparticle-detector"
 keywords:
   - microscopy
   - particle detection
