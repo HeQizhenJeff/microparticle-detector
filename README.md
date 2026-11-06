@@ -4,6 +4,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-blue.svg)](https://www.python.org/)
 [![OpenCV](https://img.shields.io/badge/OpenCV-4.5%2B-5C3EE8.svg)](https://opencv.org/)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24005848.svg)](https://doi.org/10.5281/zenodo.24005848)
 
 Circle detection and sizing for **dense, label-free brightfield microscopy of colloidal
 microspheres** — no training, no GPU, every detection geometrically auditable.
@@ -321,11 +322,29 @@ frame in our set emitted 153 circles where neighbours emitted ~290, and supplied
 
 ## Citation
 
-If you use this code, cite the repository (DOI to be added on first release):
+If you use this code, please cite it. The **concept DOI** below always resolves to the
+latest version; every release also gets its own version DOI (v1.0.0 → `10.5281/zenodo.24005849`).
+
+```bibtex
+@software{he_microparticle_detector_2026,
+  author    = {He, Qizhen},
+  title     = {microparticle-detector: dark-ring circle detection for
+               brightfield microscopy of colloidal microspheres},
+  month     = nov,
+  year      = 2026,
+  publisher = {Zenodo},
+  version   = {v1.0.0},
+  doi       = {10.5281/zenodo.24005848},
+  url       = {https://doi.org/10.5281/zenodo.24005848}
+}
+```
+
+Plain text:
 
 ```
 He Q., microparticle-detector: dark-ring circle detection for brightfield
 microscopy of colloidal microspheres, v1.0.0, 2026.
+DOI: 10.5281/zenodo.24005848
 ```
 
 ## License
